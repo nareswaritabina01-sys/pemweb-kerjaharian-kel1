@@ -10,13 +10,25 @@ return new class extends Migration
     {
         Schema::create('vacancies', function (Blueprint $table) {
             $table->id();
+
+            // Pemilik lowongan = client yang posting
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
             $table->string('title');
             $table->string('company');
             $table->string('location');
+
+            // Koordinat wajib untuk fitur geolocation radius (Haversine)
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
+
             $table->decimal('salary', 15, 2);
             $table->string('category');
             $table->text('description');
             $table->timestamps();
+
+            $table->index('category');
+            $table->index(['latitude', 'longitude']);
         });
     }
 

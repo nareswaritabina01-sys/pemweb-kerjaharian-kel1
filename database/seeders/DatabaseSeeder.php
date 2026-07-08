@@ -15,11 +15,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // User default untuk login testing (role default: freelancer)
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        // User client untuk pemilik lowongan (dibutuhkan oleh VacancySeeder)
+        User::factory()->create([
+            'name' => 'Client Demo',
+            'email' => 'client@example.com',
+            'role' => 'client',
+        ]);
+
+        // User admin untuk keperluan review/dispute
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'role' => 'admin',
+        ]);
+
+        $this->call([
+            VacancySeeder::class,
         ]);
     }
 }

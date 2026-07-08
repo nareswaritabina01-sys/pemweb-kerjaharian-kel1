@@ -31,7 +31,7 @@ class ApplicationController extends Controller
         return view('applications.index', compact('applications'));
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         $application = Application::with('vacancy')->where('user_id', Auth::id() ?? 1)->findOrFail($id);
         return view('applications.show', compact('application'));

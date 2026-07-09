@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-[#f8fafc] text-gray-800 font-sans">
+    <!-- Navbar Atas -->
     <nav class="bg-white border-b border-gray-200 fixed top-0 z-50 w-full px-6 py-3 flex justify-between items-center shadow-sm">
         <div class="flex items-center space-x-2">
             <div class="bg-[#f4b41a] text-white p-2 rounded-lg font-bold text-lg w-10 h-10 flex items-center justify-center shadow-sm">K</div>
@@ -29,6 +30,7 @@
         </div>
     </nav>
 
+    <!-- Sidebar & Konten -->
     <div class="flex pt-16">
         <aside class="w-64 bg-white h-[calc(100vh-4rem)] border-r border-gray-200 fixed left-0 top-16 overflow-y-auto hidden md:block px-4 py-6">
             <div class="space-y-1">
@@ -77,13 +79,14 @@
                 </a>
             </div>
             <div class="mt-12 pt-6 border-t border-gray-100">
-                <a href="#" class="flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl text-red-600 hover:bg-red-50">
+                <a href="{{ route('logout') }}" class="flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl text-red-600 hover:bg-red-50">
                     <i class="fa-solid fa-arrow-right-from-bracket text-lg"></i>
                     <span>Keluar</span>
                 </a>
             </div>
         </aside>
 
+        <!-- Main Content Area -->
         <main class="flex-1 md:ml-64 p-6 min-h-[calc(100vh-4rem)]">
             @yield('content')
         </main>

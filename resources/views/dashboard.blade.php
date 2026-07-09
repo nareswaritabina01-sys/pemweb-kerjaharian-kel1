@@ -78,7 +78,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="#" class="text-xs font-bold text-[#007A87] bg-teal-50 px-3 py-1.5 rounded-lg hover:bg-[#007A87] hover:text-white transition">Detail</a>
+                    <a href="{{ route('jobs.show', 2) }}" class="text-xs font-bold text-[#007A87] bg-teal-50 px-3 py-1.5 rounded-lg hover:bg-[#007A87] hover:text-white transition">Detail</a>
                 </div>
             </div>
         </div>

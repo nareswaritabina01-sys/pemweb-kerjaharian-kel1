@@ -98,4 +98,24 @@
         </div>
     </div>
 </div>
+
+<form action="{{ route('profile.update') }}" method="POST">
+    @csrf
+    @method('PUT')
+    
+    <div class="bg-white p-6 shadow-sm">
+        <h3 class="font-bold">Tentang Saya</h3>
+        <textarea name="bio" class="w-full text-xs text-gray-600">{{ auth()->user()->bio }}</textarea>
+        
+        <label>Nomor Telepon</label>
+        <input type="text" name="phone" value="{{ auth()->user()->phone }}" class="border p-1 w-full">
+        
+        <button type="submit" class="bg-[#007A87] text-white px-4 py-2 mt-2 rounded">Simpan</button>
+    </div>
+</form>
+
+<form action="{{ route('profile.avatar') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <input type="file" name="avatar" onchange="this.form.submit()">
+</form>
 @endsection

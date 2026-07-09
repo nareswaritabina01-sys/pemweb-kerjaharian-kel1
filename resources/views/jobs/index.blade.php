@@ -1,43 +1,56 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">Cari Kerja Harian</h1>
-    <p class="text-gray-600 text-sm">Temukan berbagai proyek pertukangan, pengecatan, dan jasa harian di sekitarmu.</p>
-</div>
+<div class="max-w-6xl mx-auto">
+    <!-- Search Bar -->
+    <form action="{{ route('jobs.index') }}" method="GET" class="flex items-center bg-white rounded-full border border-gray-200 shadow-sm p-2 mb-8 w-full max-w-4xl mx-auto">
+        <i class="fa-solid fa-magnifying-glass text-gray-400 px-6"></i>
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pekerjaan, lokasi, atau keahlian..." class="w-full focus:outline-none text-sm text-gray-700">
+        <button type="submit" class="bg-[#007A87] hover:bg-teal-800 text-white font-bold px-8 py-3 rounded-full text-sm transition">Cari</button>
+    </form>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    @forelse($vacancies as $job)
-        <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-teal-500 transition">
-            <div>
-                <div class="flex justify-between items-start">
-                    <div class="w-10 h-10 bg-teal-50 text-[#007A87] rounded-xl flex items-center justify-center text-sm font-bold">
-                        <i class="fa-solid fa-briefcase"></i>
-                    </div>
-                    <span class="px-2.5 py-0.5 bg-green-50 text-green-700 text-[10px] font-bold rounded-full border border-green-100">Aktif</span>
-                </div>
-                <div class="mt-4">
-                    <h3 class="text-xs font-bold text-gray-900">{{ $job->title }}</h3>
-                    <p class="text-[11px] text-gray-500 mt-0.5">{{ $job->company_name ?? 'Penyedia Kerja Harian' }} • {{ $job->location }}</p>
-                </div>
-                <p class="text-xs text-gray-600 mt-3 line-clamp-2 leading-relaxed">
-                    {{ $job->description }}
-                </p>
-                <div class="mt-4 flex items-center space-x-4 text-[11px] text-gray-400">
-                    <span><i class="fa-solid fa-money-bill-wave text-teal-600 mr-1"></i> Rp {{ number_format($job->salary, 0, ',', '.') }}/hari</span>
-                </div>
+    <!-- Category Pills -->
+    <div class="flex flex-wrap gap-3 mb-10 justify-center">
+        @php
+            $categories = ['Pertukangan', 'ART', 'Buruh Harian', 'Supir', 'Security', 'Tukang Kebun', 'Laundry', 'Lainnya'];
+        @endphp
+        @foreach($categories as $cat)
+            <button class="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:border-[#007A87] hover:text-[#007A87] transition flex items-center gap-2">
+                {{ $cat }}
+            </button>
+        @endforeach
+    </div>
+
+    <!-- Job Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @foreach($vacancies as $job)
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg transition">
+            <div class="h-32 bg-teal-50 flex items-center justify-center">
+                <i class="fa-solid fa-location-dot text-[#007A87] text-2xl"></i>
             </div>
-            <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-                <span class="text-[10px] text-gray-400 font-medium">Batas: {{ $job->deadline ?? 'Segera' }}</span>
-                <a href="{{ route('jobs.show', $job->id) }}" class="bg-[#007A87] hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-sm">
-                    Lihat Detail
-                </a>
+            
+            <div class="p-5">
+                <div class="text-[10px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded w-fit mb-3 flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved"></i> Dana Aman di Rekber
+                </div>
+                
+                <h3 class="font-bold text-gray-900 text-sm mb-1">{{ $job->title }}</h3>
+                <p class="text-[11px] text-gray-500 mb-1"><i class="fa-solid fa-building mr-1"></i>{{ $job->company_name }}</p>
+                <p class="text-[11px] text-gray-500 mb-3"><i class="fa-solid fa-location-dot mr-1"></i>{{ $job->location }}</p>
+                
+                <p class="font-bold text-[#007A87] text-xs mb-4">Rp {{ number_format($job->salary, 0, ',', '.') }} / hari</p>
+                
+                <div class="flex justify-between items-center text-[10px] text-gray-400 border-t pt-3 mb-4">
+                    <span><i class="fa-solid fa-calendar-day mr-1"></i>Harian</span>
+                    <span><i class="fa-solid fa-clock mr-1"></i>{{ $job->created_at->diffForHumans() }}</span>
+                </div>
+
+                <button class="w-full bg-[#f4b41a] hover:bg-yellow-500 text-black font-bold py-3 rounded-xl text-xs transition">
+                    Detail & Lamar
+                </button>
             </div>
         </div>
-    @empty
-        <div class="col-span-full bg-white border border-gray-200 rounded-2xl p-8 text-center text-gray-500 text-xs">
-            Belum ada lowongan kerja harian yang tersedia saat ini.
-        </div>
-    @endforelse
+        @endforeach
+    </div>
 </div>
 @endsection

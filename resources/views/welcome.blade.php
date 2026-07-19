@@ -27,8 +27,19 @@
                 </div>
             </div>
             <div class="flex items-center gap-4">
-                <a href="{{ route('login') }}" class="text-xs font-bold text-gray-600 hover:text-[#007A87] transition">Masuk</a>
-                <a href="{{ route('register') }}" class="bg-[#007A87] hover:bg-teal-700 text-white font-bold px-5 py-2 rounded-xl text-xs transition shadow-sm">Daftar</a>
+                @guest
+                    <a href="{{ route('login') }}" class="text-xs font-bold text-gray-600 hover:text-[#007A87] transition">Masuk</a>
+                    <a href="{{ route('register') }}" class="bg-[#007A87] hover:bg-teal-700 text-white font-bold px-5 py-2 rounded-xl text-xs transition shadow-sm">Daftar</a>
+                @endguest
+
+                @auth
+                    <a href="{{ route('dashboard') }}" class="bg-[#007A87] hover:bg-teal-700 text-white font-bold px-5 py-2 rounded-xl text-xs transition shadow-sm">Dashboard Saya</a>
+                    
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="text-xs font-bold text-red-500 hover:text-red-700 transition">Keluar</button>
+                    </form>
+                @endauth
             </div>
         </div>
     </nav>

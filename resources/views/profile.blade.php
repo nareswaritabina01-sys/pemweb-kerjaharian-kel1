@@ -1,9 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">Profil Saya</h1>
-    <p class="text-gray-600 text-sm">Kelola informasi profil, keahlian, dan dokumen penunjang lamaranmu.</p>
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Profil Saya</h1>
+        <p class="text-gray-600 text-sm">Kelola informasi profil, keahlian, dan dokumen penunjang lamaranmu.</p>
+    </div>
+    
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="bg-red-50 text-red-600 hover:bg-red-100 font-bold px-4 py-2 rounded-lg text-xs transition border border-red-200">
+            <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
+        </button>
+    </form>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -103,19 +112,20 @@
     @csrf
     @method('PUT')
     
-    <div class="bg-white p-6 shadow-sm">
-        <h3 class="font-bold">Tentang Saya</h3>
-        <textarea name="bio" class="w-full text-xs text-gray-600">{{ auth()->user()->bio }}</textarea>
+    <div class="bg-white p-6 shadow-sm mt-6 border border-gray-200 rounded-2xl">
+        <h3 class="font-bold text-sm mb-4">Edit Info Tambahan</h3>
+        <label class="block text-xs font-bold text-gray-700 mb-1.5">Tentang Saya</label>
+        <textarea name="bio" class="w-full text-xs text-gray-600 border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#007A87]">{{ auth()->user()->bio ?? '' }}</textarea>
         
-        <label>Nomor Telepon</label>
-        <input type="text" name="phone" value="{{ auth()->user()->phone }}" class="border p-1 w-full">
+        <label class="block text-xs font-bold text-gray-700 mb-1.5 mt-4">Nomor Telepon</label>
+        <input type="text" name="phone" value="{{ auth()->user()->phone ?? '' }}" class="border border-gray-200 rounded-xl p-3 w-full text-xs focus:outline-none focus:ring-2 focus:ring-[#007A87]">
         
-        <button type="submit" class="bg-[#007A87] text-white px-4 py-2 mt-2 rounded">Simpan</button>
+        <button type="submit" class="bg-[#007A87] text-white font-bold px-5 py-2.5 mt-4 rounded-xl text-xs hover:bg-teal-700 transition">Simpan Perubahan</button>
     </div>
 </form>
 
-<form action="{{ route('profile.avatar') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('profile.avatar') }}" method="POST" enctype="multipart/form-data" class="mt-4">
     @csrf
-    <input type="file" name="avatar" onchange="this.form.submit()">
+    <input type="file" name="avatar" class="text-xs text-gray-500" onchange="this.form.submit()">
 </form>
 @endsection

@@ -1,3 +1,28 @@
+# KerjaHarian
+
+Portal pencarian pekerjaan harian berbasis Laravel dengan fitur:
+
+- Geolocation Radius
+- Lowongan Kerja
+- Lamaran
+- Kontrak
+- Konfirmasi Pembayaran
+- Dashboard Admin
+
+## Tech Stack
+
+- Laravel 12
+- Bootstrap 5
+- MySQL
+- LeafletJS
+- SweetAlert2
+
+## Dokumentasi
+
+- docs/PRD.md
+- docs/DESIGN.md
+- docs/TASK.md
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

@@ -10,7 +10,8 @@
         </div>
 
         {{-- Form Pencarian --}}
-        <form action="{{ route('pencari-kerja.lowongan.index') }}" method="GET" class="mb-6 space-y-4">
+        <form id="form-pencarian-lowongan" action="{{ route('pencari-kerja.lowongan.index') }}" method="GET"
+            class="mb-6 space-y-4">
             <div class="flex items-center bg-white rounded-full border border-gray-200 shadow-sm p-2">
                 <i class="fa-solid fa-magnifying-glass text-gray-400 px-4"></i>
                 <input type="text" name="pencarian" value="{{ request('pencarian') }}"
@@ -148,7 +149,7 @@
                         .addTo(peta)
                         .bindPopup(
                             `<strong>${job.judul}</strong><br>Rp ${Number(job.upah).toLocaleString('id-ID')}/${job.satuan_upah}<br><a href="/pencari-kerja/lowongan/${job.id}" class="text-primary">Lihat Detail</a>`
-                            );
+                        );
                 }
             });
 
@@ -161,7 +162,7 @@
                 navigator.geolocation.getCurrentPosition(function(posisi) {
                     document.getElementById('input-latitude').value = posisi.coords.latitude;
                     document.getElementById('input-longitude').value = posisi.coords.longitude;
-                    document.querySelector('form').submit();
+                    document.getElementById('form-pencarian-lowongan').submit();
                 }, function() {
                     alert('Gagal mengambil lokasi. Pastikan izin lokasi diaktifkan.');
                 });

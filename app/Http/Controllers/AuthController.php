@@ -2,99 +2,97 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterPemberiKerjaRequest;
+use App\Http\Requests\Auth\RegisterPencariKerjaRequest;
+use App\Services\AuthService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    /**
-     * Login User
-     */
-    public function login(Request $request)
+    public function __construct(protected AuthService $authService)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+    }
 
-        $remember = $request->has('remember');
+    public function showLoginForm(): View
+    {
+        return view('auth.login');
+    }
 
-        if (!Auth::attempt([
-            'email' => $request->email,
-            'password' => $request->password,
-        ], $remember)) {
+    public function login(LoginRequest $request): RedirectResponse
+    {
+        $credentials = $request->only('email', 'password');
 
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()
-                ->withInput()
-                ->withErrors([
-                    'email' => 'Email atau password salah.',
-                ]);
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Email atau password salah.']);
         }
 
         $request->session()->regenerate();
 
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            return redirect()->route('dashboard')
-                ->with('success', 'Selamat datang Admin.');
+        if (! $user->status_aktif) {
+            Auth::logout();
+
+            return back()->withErrors([
+                'email' => 'Akun Anda telah dinonaktifkan. Hubungi admin.',
+            ]);
         }
 
-        if ($user->role === 'client') {
-            return redirect()->route('dashboard')
-                ->with('success', 'Selamat datang Client.');
-        }
-
-        return redirect()->route('dashboard')
-            ->with('success', 'Selamat datang Freelancer.');
+        return redirect()
+            ->to($this->authService->redirectPath($user))
+            ->with('success', 'Selamat datang, ' . $user->nama . '.');
     }
 
-    /**
-     * Register User
-     */
-    public function register(Request $request)
+    public function showRegisterChoice(): View
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'password' => [
-                'required',
-                'confirmed',
-                Password::min(8),
-            ],
-            'role' => ['required', 'in:freelancer,client'],
-        ]);
+        return view('auth.register-choice');
+    }
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
-            'role' => $validated['role'],
-            'password' => Hash::make($validated['password']),
-        ]);
+    public function showRegisterPemberiKerja(): View
+    {
+        return view('auth.register-pemberi-kerja');
+    }
+
+    public function showRegisterPencariKerja(): View
+    {
+        return view('auth.register-pencari-kerja');
+    }
+
+    public function registerPemberiKerja(RegisterPemberiKerjaRequest $request): RedirectResponse
+    {
+        $user = $this->authService->registerPemberiKerja($request->validated());
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')
-            ->with('success', 'Registrasi berhasil.');
+        return redirect()
+            ->to($this->authService->redirectPath($user))
+            ->with('success', 'Registrasi berhasil. Selamat datang, ' . $user->nama . '.');
     }
 
-    /**
-     * Logout
-     */
-    public function logout(Request $request)
+    public function registerPencariKerja(RegisterPencariKerjaRequest $request): RedirectResponse
+    {
+        $user = $this->authService->registerPencariKerja($request->validated());
+
+        Auth::login($user);
+
+        return redirect()
+            ->to($this->authService->redirectPath($user))
+            ->with('success', 'Registrasi berhasil. Selamat datang, ' . $user->nama . '.');
+    }
+
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')
-            ->with('success', 'Berhasil logout.');
+        return redirect()->route('login')->with('success', 'Berhasil logout.');
     }
 }

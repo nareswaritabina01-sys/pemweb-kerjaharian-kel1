@@ -1,49 +1,95 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\VacancyController;
-use App\Http\Controllers\ApplicationController;
-use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\PencariKerja\DashboardController;
+use App\Http\Controllers\PencariKerja\LowonganController;
+use App\Http\Controllers\PencariKerja\LamaranController;
+use App\Http\Controllers\PencariKerja\ProfilController;
+use App\Http\Controllers\PencariKerja\PesanController;
+use App\Http\Controllers\PencariKerja\NotifikasiController;
+use App\Http\Controllers\PencariKerja\LowonganTersimpanController;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
+// GUEST
 Route::middleware('guest')->group(function () {
-    Route::view('/login', 'auth.login')->name('login');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 
-    Route::view('/register', 'auth.register')->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.process');
+    Route::get('/register', [AuthController::class, 'showRegisterChoice'])->name('register');
+
+    Route::get('/register/pemberi-kerja', [AuthController::class, 'showRegisterPemberiKerja'])
+        ->name('register.pemberi-kerja');
+    Route::post('/register/pemberi-kerja', [AuthController::class, 'registerPemberiKerja'])
+        ->name('register.pemberi-kerja.process');
+
+    Route::get('/register/pencari-kerja', [AuthController::class, 'showRegisterPencariKerja'])
+        ->name('register.pencari-kerja');
+    Route::post('/register/pencari-kerja', [AuthController::class, 'registerPencariKerja'])
+        ->name('register.pencari-kerja.process');
 });
 
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth')
-    ->name('logout');
+// AUTH
+Route::middleware(['auth', 'cek.admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard.index');
+    })->name('dashboard');
+});
+
+Route::middleware(['auth', 'cek.pemberi-kerja'])->prefix('pemberi-kerja')->name('pemberi-kerja.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('pemberi-kerja.dashboard.index');
+    })->name('dashboard');
+});
+
+
+// PENCARI KERJA
+Route::middleware(['auth', 'cek.pencari-kerja'])->prefix('pencari-kerja')->name('pencari-kerja.')->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Lowongan
+    Route::get('/lowongan', [LowonganController::class, 'index'])->name('lowongan.index');
+    Route::get('/lowongan/{lowongan}', [LowonganController::class, 'show'])->name('lowongan.show');
+
+    // Lamaran
+    Route::get('/lamaran', [LamaranController::class, 'index'])->name('lamaran.index');
+    Route::get('/lamaran/{lamaran}', [LamaranController::class, 'show'])->name('lamaran.show');
+    Route::post('/lowongan/{lowongan}/lamar', [LamaranController::class, 'store'])->name('lamaran.store');
+    Route::delete('/lamaran/{lamaran}/batalkan', [LamaranController::class, 'batalkan'])->name('lamaran.batalkan');
+
+    // Profil
+    Route::get('/profil', [ProfilController::class, 'edit'])->name('profil.edit');
+    Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
+    Route::post('/profil/foto', [ProfilController::class, 'updateFoto'])->name('profil.foto');
+
+    // Lowongan Tersimpan
+    Route::get('/lowongan-tersimpan', [LowonganTersimpanController::class, 'index'])->name('lowongan-tersimpan.index');
+    Route::post('lowongan/{lowongan}/simpan', [LowonganTersimpanController::class, 'toggle'])->name('lowongan.simpan');
+    Route::delete('lowongan-tersimpan/{lowongan}/hapus', [LowonganTersimpanController::class, 'hapus'])->name('lowongan-tersimpan.hapus');
+
+    // Pesan
+    Route::get('/pesan', [PesanController::class, 'index'])->name('pesan.index');
+    Route::get('/pesan/{percakapan}', [PesanController::class, 'show'])->name('pesan.show');
+    Route::post('pesan/{percakapan}/kirim', [PesanController::class, 'kirim'])->name('pesan.kirim');
+    Route::get('pesan/{percakapan}/baru', [PesanController::class, 'ambilBaru'])->name('pesan.baru');
+
+    // Notifikasi (DUMMY - belum ada tabel/logic asli, tunggu keputusan scope resmi)
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
+
+    // Bantuan (statis)
+    Route::get('/bantuan', function () {
+        return view('pencari-kerja.bantuan');
+    })->name('bantuan');
+});
 
 Route::middleware('auth')->group(function () {
-    
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    Route::get('/profile', function () {
-        return view('profile');
-    })->name('profile');
-
-    Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
-
-    Route::get('/jobs', [VacancyController::class, 'index'])->name('jobs.index');
-    Route::get('/jobs/{id}', [VacancyController::class, 'show'])->name('jobs.show');
-
-    Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
-    Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
-    Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
-
-    Route::view('/notifications', 'notifications')->name('notifications');
-    Route::view('/messages', 'messages')->name('messages');
-    Route::view('/saved-jobs', 'saved-jobs')->name('saved-jobs');
-    Route::view('/help', 'help')->name('help');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+// Route dashboard & fitur per role akan ditambahkan bertahap:
+// admin.* -> setelah fitur Admin selesai
+// pemberi-kerja.* -> setelah fitur Pemberi Kerja selesai
+// pencari-kerja.* -> setelah fitur Pencari Kerja selesai

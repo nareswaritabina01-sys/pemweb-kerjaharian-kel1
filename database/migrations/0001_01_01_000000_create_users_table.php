@@ -10,19 +10,31 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nama');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
-            // Role sistem: admin, client (posting kerja & hire), freelancer (kerja & digaji)
-            $table->enum('role', ['admin', 'client', 'freelancer'])->default('freelancer');
+            // Role sistem: admin, pemberi_kerja (posting lowongan & pilih pekerja),
+            // pencari_kerja (apply & dikonfirmasi menerima pembayaran)
+            $table->enum('role', ['admin', 'pemberi_kerja', 'pencari_kerja']);
 
-            // Data rekening untuk pencairan gaji manual (khusus freelancer, tapi kolom digeneralisasi)
-            $table->string('bank_name')->nullable();
-            $table->string('bank_account_number')->nullable();
-            $table->string('bank_account_holder')->nullable();
+            $table->string('no_telepon')->nullable();
+            $table->text('alamat')->nullable();
 
+            // Lokasi user, dipakai untuk radius search (fitur wajib)
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+
+            $table->string('foto_profil')->nullable();
+
+            // Data rekening penerima, khusus pencari_kerja, dipakai
+            // pemberi_kerja saat transfer manual
+            $table->string('nama_bank')->nullable();
+            $table->string('nomor_rekening')->nullable();
+            $table->string('nama_pemilik_rekening')->nullable();
+
+            $table->boolean('status_aktif')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -45,8 +57,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

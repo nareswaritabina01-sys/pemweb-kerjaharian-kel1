@@ -3,7 +3,7 @@
 @section('content')
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Notifikasi</h1>
-        <p class="text-gray-600 text-sm">Informasi terbaru mengenai pembaruan status lamaran dan pesan masuk kamu.</p>
+        <p class="text-gray-600 text-sm">Informasi terbaru mengenai kontrak dan pesan masuk dari pencari kerja.</p>
     </div>
 
     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
@@ -30,7 +30,7 @@
                 </div>
                 <div class="ml-4 flex-shrink-0">
                     @if (empty($item->read_at))
-                        <form action="{{ route('pencari-kerja.notifikasi.baca', $item->id) }}" method="POST">
+                        <form action="{{ route('pemberi-kerja.notifikasi.baca', $item->id) }}" method="POST">
                             @csrf
                             <button type="submit" class="text-xs text-primary font-semibold">Tandai Dibaca</button>
                         </form>
@@ -43,7 +43,7 @@
             <div class="p-12 text-center">
                 <i class="fa-solid fa-bell-slash text-3xl text-gray-300"></i>
                 <p class="text-xs text-gray-500 mt-3">Belum ada notifikasi.</p>
-                <p class="text-[11px] text-gray-400 mt-1">Pembaruan lamaran dan pesan baru akan muncul di sini.</p>
+                <p class="text-[11px] text-gray-400 mt-1">Pembaruan kontrak dan pesan baru akan muncul di sini.</p>
             </div>
         @endforelse
     </div>

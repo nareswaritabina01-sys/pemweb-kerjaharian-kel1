@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\PencariKerja;
+namespace App\Http\Controllers\PemberiKerja;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lamaran;
-use App\Models\Pesan;
-use App\Models\User;
 use App\Models\Notifikasi;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -16,6 +14,7 @@ class NotifikasiController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
+
         $items = Notifikasi::where('user_id', $user->id)
             ->latest()
             ->limit(50)
@@ -33,7 +32,7 @@ class NotifikasiController extends Controller
                 ];
             });
 
-        return view('pencari-kerja.notifikasi', ['notifikasi' => $items]);
+        return view('pemberi-kerja.notifikasi', ['notifikasi' => $items]);
     }
 
     public function baca(Request $request, Notifikasi $notifikasi)
@@ -47,6 +46,6 @@ class NotifikasiController extends Controller
 
         $notifikasi->update(['read_at' => now()]);
 
-        return redirect()->to($notifikasi->link ?? route('pencari-kerja.notifikasi'));
+        return redirect()->to($notifikasi->link ?? route('pemberi-kerja.notifikasi'));
     }
 }

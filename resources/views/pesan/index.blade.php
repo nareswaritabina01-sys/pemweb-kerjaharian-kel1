@@ -3,8 +3,14 @@
 @section('content')
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Pesan</h1>
-        <p class="text-gray-600 text-sm">Hubungi pemberi kerja secara langsung untuk berdiskusi mengenai pekerjaan.</p>
+        <p class="text-gray-600 text-sm">
+            {{ auth()->user()->isPemberiKerja() ? 'Hubungi pekerja yang Anda terima untuk berdiskusi mengenai pekerjaan.' : 'Hubungi pemberi kerja secara langsung untuk berdiskusi mengenai pekerjaan.' }}
+        </p>
     </div>
+
+    @php
+        $prefixRoute = auth()->user()->isPemberiKerja() ? 'pemberi-kerja' : 'pencari-kerja';
+    @endphp
 
     <div
         class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex h-[calc(100vh-12rem)] min-h-[500px]">
@@ -18,24 +24,23 @@
             <div class="flex-1 overflow-y-auto divide-y divide-gray-100 bg-white">
                 @forelse ($daftarPercakapan as $item)
                     @php
-                        $partner = $item->lamaran->lowongan->pemberiKerja;
+                        $partner = $item->lawanBicara(auth()->user());
                         $aktif = $percakapanAktif && $percakapanAktif->id === $item->id;
                     @endphp
-                    <a href="{{ route('pencari-kerja.pesan.show', $item) }}"
+                    <a href="{{ route($prefixRoute . '.pesan.show', $item) }}"
                         class="p-4 flex items-start space-x-3 cursor-pointer transition {{ $aktif ? 'bg-teal-50/40 border-l-4 border-primary' : 'hover:bg-gray-50' }}">
                         <div
                             class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600 shrink-0">
-                            {{ strtoupper(substr($partner->nama, 0, 1)) }}
+                            {{ strtoupper(substr($partner->nama ?? '?', 0, 1)) }}
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-xs font-bold text-gray-900 truncate">{{ $partner->nama }}</h4>
+                            <h4 class="text-xs font-bold text-gray-900 truncate">{{ $partner->nama ?? 'Pengguna' }}</h4>
                             <p class="text-[11px] text-gray-500 truncate mt-0.5">{{ $item->lamaran->lowongan->judul }}</p>
                         </div>
                     </a>
                 @empty
                     <div class="p-6 text-center">
-                        <p class="text-xs text-gray-500">Belum ada percakapan. Pesan akan muncul setelah lamaran Anda
-                            diterima.</p>
+                        <p class="text-xs text-gray-500">Belum ada percakapan. Pesan akan muncul setelah lamaran diterima.</p>
                     </div>
                 @endforelse
             </div>
@@ -44,18 +49,18 @@
         {{-- Panel chat --}}
         <div class="flex-1 flex-col bg-white {{ $percakapanAktif ? 'flex' : 'hidden md:flex' }}">
             @if ($percakapanAktif)
-                @php $partner = $percakapanAktif->lamaran->lowongan->pemberiKerja; @endphp
+                @php $partner = $percakapanAktif->lawanBicara(auth()->user()); @endphp
 
                 <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between shadow-sm z-10 bg-white">
                     <div class="flex items-center space-x-3">
-                        <a href="{{ route('pencari-kerja.pesan.index') }}" class="md:hidden text-gray-400"><i
+                        <a href="{{ route($prefixRoute . '.pesan.index') }}" class="md:hidden text-gray-400"><i
                                 class="fa-solid fa-arrow-left"></i></a>
                         <div
                             class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600">
-                            {{ strtoupper(substr($partner->nama, 0, 1)) }}
+                            {{ strtoupper(substr($partner->nama ?? '?', 0, 1)) }}
                         </div>
                         <div>
-                            <h3 class="text-xs font-bold text-gray-900">{{ $partner->nama }}</h3>
+                            <h3 class="text-xs font-bold text-gray-900">{{ $partner->nama ?? 'Pengguna' }}</h3>
                             <span class="text-[10px] text-gray-400">{{ $percakapanAktif->lamaran->lowongan->judul }}</span>
                         </div>
                     </div>
@@ -116,6 +121,7 @@
             const percakapanAktif = @json($percakapanAktif?->id);
             if (!percakapanAktif) return;
 
+            const prefixRoute = @json($prefixRoute);
             const form = document.getElementById('form-kirim-pesan');
             const inputIsi = document.getElementById('input-isi-pesan');
             const listPesan = document.getElementById('list-pesan');
@@ -140,15 +146,13 @@
                 const isi = inputIsi.value.trim();
                 if (!isi) return;
 
-                fetch(`/pencari-kerja/pesan/${percakapanAktif}/kirim`, {
+                fetch(`/${prefixRoute}/pesan/${percakapanAktif}/kirim`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         },
-                        body: JSON.stringify({
-                            isi
-                        }),
+                        body: JSON.stringify({ isi }),
                     })
                     .then(res => res.json())
                     .then(data => {
@@ -161,7 +165,7 @@
             });
 
             setInterval(function() {
-                fetch(`/pencari-kerja/pesan/${percakapanAktif}/baru?sejak_id=${idPesanTerakhir}`)
+                fetch(`/${prefixRoute}/pesan/${percakapanAktif}/baru?sejak_id=${idPesanTerakhir}`)
                     .then(res => res.json())
                     .then(data => {
                         data.pesan.forEach(p => {

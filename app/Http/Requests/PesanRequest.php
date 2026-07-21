@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\PencariKerja;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -8,13 +8,7 @@ class PesanRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $percakapan = $this->route('percakapan');
-        $user = $this->user();
-
-        $idPencariKerja = $percakapan->lamaran->id_pencari_kerja;
-        $idPemberiKerja = $percakapan->lamaran->lowongan->id_pemberi_kerja;
-
-        return $user->id === $idPencariKerja || $user->id === $idPemberiKerja;
+        return $this->user() !== null;
     }
 
     public function rules(): array
@@ -28,7 +22,6 @@ class PesanRequest extends FormRequest
     {
         return [
             'isi.required' => 'Pesan tidak boleh kosong.',
-            'isi.max'      => 'Pesan maksimal 1000 karakter.',
         ];
     }
 }

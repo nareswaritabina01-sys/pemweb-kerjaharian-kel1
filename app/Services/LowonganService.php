@@ -64,6 +64,28 @@ class LowonganService
 
     public function hapus(Lowongan $lowongan): void
     {
+        $adaPelamarDiterima = $lowongan->lamaran()->where('status', 'diterima')->exists();
+
+        if ($adaPelamarDiterima) {
+            throw new \RuntimeException('Lowongan tidak bisa dihapus karena sudah memiliki pelamar yang diterima.');
+        }
+
         $lowongan->delete();
+    }
+
+    /**
+     * Ambil lowongan milik pemberi kerja yang sedang login, dengan filter status opsional.
+     */
+    public function milikSendiri(User $pemberiKerja, ?string $status = null): LengthAwarePaginator
+    {
+        $query = Lowongan::where('id_pemberi_kerja', $pemberiKerja->id)
+            ->withCount('lamaran')
+            ->latest();
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query->paginate(10)->withQueryString();
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\PencariKerja;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\PencariKerja\PesanRequest;
+use App\Http\Requests\PesanRequest;
 use App\Models\Percakapan;
+use App\Models\User;
 use App\Services\PesanService;
 use Illuminate\Http\Request;
 
@@ -17,15 +17,9 @@ class PesanController extends Controller
         /** @var \App\Models\User $user */
         $user = $request->user();
 
-        $daftarPercakapan = Percakapan::whereHas('lamaran', function ($query) use ($user) {
-            $query->where('id_pencari_kerja', $user->id)
-                ->orWhereHas('lowongan', fn($q) => $q->where('id_pemberi_kerja', $user->id));
-        })
-            ->with(['lamaran.lowongan.pemberiKerja', 'lamaran.pencariKerja', 'pesan' => fn($q) => $q->latest()->limit(1)])
-            ->latest('updated_at')
-            ->get();
+        $daftarPercakapan = $this->daftarPercakapanUntuk($user);
 
-        return view('pencari-kerja.pesan', [
+        return view('pesan.index', [
             'daftarPercakapan' => $daftarPercakapan,
             'percakapanAktif' => null,
             'pesanList' => collect(),
@@ -37,24 +31,15 @@ class PesanController extends Controller
         /** @var \App\Models\User $user */
         $user = $request->user();
 
-        $idPencariKerja = $percakapan->lamaran->id_pencari_kerja;
-        $idPemberiKerja = $percakapan->lamaran->lowongan->id_pemberi_kerja;
-
-        abort_unless($user->id === $idPencariKerja || $user->id === $idPemberiKerja, 403);
+        $this->pastikanPeserta($user, $percakapan);
 
         $this->pesanService->tandaiDibaca($percakapan, $user);
 
-        $daftarPercakapan = Percakapan::whereHas('lamaran', function ($query) use ($user) {
-            $query->where('id_pencari_kerja', $user->id)
-                ->orWhereHas('lowongan', fn($q) => $q->where('id_pemberi_kerja', $user->id));
-        })
-            ->with(['lamaran.lowongan.pemberiKerja', 'lamaran.pencariKerja', 'pesan' => fn($q) => $q->latest()->limit(1)])
-            ->latest('updated_at')
-            ->get();
+        $daftarPercakapan = $this->daftarPercakapanUntuk($user);
 
-        $percakapan->load(['lamaran.lowongan.pemberiKerja', 'pesan.pengirim']);
+        $percakapan->load(['lamaran.lowongan.pemberiKerja', 'lamaran.pencariKerja', 'pesan.pengirim']);
 
-        return view('pencari-kerja.pesan', [
+        return view('pesan.index', [
             'daftarPercakapan' => $daftarPercakapan,
             'percakapanAktif' => $percakapan,
             'pesanList' => $percakapan->pesan,
@@ -85,10 +70,7 @@ class PesanController extends Controller
         /** @var \App\Models\User $user */
         $user = $request->user();
 
-        $idPencariKerja = $percakapan->lamaran->id_pencari_kerja;
-        $idPemberiKerja = $percakapan->lamaran->lowongan->id_pemberi_kerja;
-
-        abort_unless($user->id === $idPencariKerja || $user->id === $idPemberiKerja, 403);
+        $this->pastikanPeserta($user, $percakapan);
 
         $sejakId = (int) $request->query('sejak_id', 0);
         $pesanBaru = $this->pesanService->ambilBaru($percakapan, $sejakId);
@@ -102,5 +84,24 @@ class PesanController extends Controller
                 'dibuat_pada' => $p->created_at->format('H:i'),
             ]),
         ]);
+    }
+
+    private function daftarPercakapanUntuk(User $user)
+    {
+        return Percakapan::whereHas('lamaran', function ($query) use ($user) {
+            $query->where('id_pencari_kerja', $user->id)
+                ->orWhereHas('lowongan', fn($q) => $q->where('id_pemberi_kerja', $user->id));
+        })
+            ->with(['lamaran.lowongan.pemberiKerja', 'lamaran.pencariKerja', 'pesan' => fn($q) => $q->latest()->limit(1)])
+            ->latest('updated_at')
+            ->get();
+    }
+
+    private function pastikanPeserta(User $user, Percakapan $percakapan): void
+    {
+        $idPencariKerja = $percakapan->lamaran->id_pencari_kerja;
+        $idPemberiKerja = $percakapan->lamaran->lowongan->id_pemberi_kerja;
+
+        abort_unless($user->id === $idPencariKerja || $user->id === $idPemberiKerja, 403);
     }
 }

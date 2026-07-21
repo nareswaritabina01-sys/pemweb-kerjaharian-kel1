@@ -62,6 +62,28 @@
                     @endif
                 </div>
             </div>
+
+            @if (in_array($lamaran->kontrak->status, ['selesai', 'dibayar']))
+                <div class="mt-6 border-t border-gray-100 pt-6 space-y-3">
+                    @if ($lamaran->kontrak->status === 'selesai')
+                        <form action="{{ route('pencari-kerja.kontrak.dibayar', $lamaran->kontrak) }}" method="POST">
+                            @csrf
+                            <button type="submit"
+                                class="inline-block bg-primary hover:bg-primary-hover text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                                <i class="fa-solid fa-check-circle mr-1"></i> Konfirmasi Pembayaran
+                            </button>
+                        </form>
+                    @endif
+
+                    <form action="{{ route('pencari-kerja.kontrak.sengketa', $lamaran->kontrak) }}" method="POST">
+                        @csrf
+                        <button type="button" onclick="konfirmasiSengketa(this)"
+                            class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                            <i class="fa-solid fa-gavel mr-1"></i> Ajukan Sengketa
+                        </button>
+                    </form>
+                </div>
+            @endif
         @endif
 
         @if ($lamaran->percakapan)
@@ -104,6 +126,23 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         document.getElementById(`form-batal-${id}`).submit();
+                    }
+                });
+            }
+
+            function konfirmasiSengketa(tombol) {
+                Swal.fire({
+                    title: 'Ajukan sengketa kontrak?',
+                    text: 'Anda akan mengajukan sengketa. Admin akan meninjau kasus ini.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Ya, Ajukan Sengketa',
+                    cancelButtonText: 'Batal',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        tombol.closest('form').submit();
                     }
                 });
             }

@@ -3,6 +3,11 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Pesan;
+use App\Models\Kontrak;
+use App\Models\Notifikasi;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +24,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('*', function ($view) {
+            $user = Auth::user();
+            $notifCount = 0;
+
+            if ($user) {
+                try {
+                    $notifCount = Notifikasi::where('user_id', $user->id)->whereNull('read_at')->count();
+                } catch (\Throwable $e) {
+                    $notifCount = 0;
+                }
+            }
+
+            $view->with('notifCount', $notifCount);
+        });
     }
 }

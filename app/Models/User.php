@@ -33,6 +33,8 @@ class User extends Authenticatable
         'nama_pemilik_rekening',
         'status_aktif',
         'bio',
+        'nama_usaha',
+        'jenis_usaha',
     ];
 
     /**
@@ -113,20 +115,31 @@ class User extends Authenticatable
 
     public function getKelengkapanProfilAttribute(): int
     {
-        $field = [
-            'nama',
-            'no_telepon',
-            'alamat',
-            'foto_profil',
-            'bio',
-            'nama_bank',
-            'nomor_rekening',
-            'nama_pemilik_rekening',
-        ];
+        if ($this->isPemberiKerja()) {
+            $fields = [
+                'nama',
+                'no_telepon',
+                'alamat',
+                'foto_profil',
+                'bio',
+            ];
+        } else {
+            // Pencari Kerja (default) — termasuk data rekening
+            $fields = [
+                'nama',
+                'no_telepon',
+                'alamat',
+                'foto_profil',
+                'bio',
+                'nama_bank',
+                'nomor_rekening',
+                'nama_pemilik_rekening',
+            ];
+        }
 
-        $terisi = collect($field)->filter(fn($f) => filled($this->{$f}))->count();
+        $terisi = collect($fields)->filter(fn($f) => filled($this->{$f}))->count();
 
-        return (int) round(($terisi / count($field)) * 100);
+        return (int) round(($terisi / count($fields)) * 100);
     }
 
     // ===== Helper Kelengkapan Rekening (khusus Pencari Kerja) =====
@@ -136,6 +149,11 @@ class User extends Authenticatable
         return filled($this->nama_bank)
             && filled($this->nomor_rekening)
             && filled($this->nama_pemilik_rekening);
+    }
+
+    public function lowongan(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Lowongan::class, 'id_pemberi_kerja');
     }
 
     public function lowonganTersimpan(): \Illuminate\Database\Eloquent\Relations\HasMany

@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Percakapan;
 use App\Models\Pesan;
 use App\Models\User;
+use App\Models\Notifikasi;
+use Illuminate\Support\Str;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Collection;
 
@@ -23,6 +25,19 @@ class PesanService
             'id_pengirim'   => $pengirim->id,
             'isi'           => $isi,
         ]);
+
+        // Buat notifikasi untuk penerima
+        $penerima = $percakapan->lawanBicara($pengirim);
+        if ($penerima) {
+            Notifikasi::create([
+                'user_id' => $penerima->id,
+                'tipe' => 'pesan',
+                'judul' => 'Pesan baru dari ' . $pengirim->nama,
+                'pesan' => Str::limit($isi, 150),
+                'link' => route('pesan.show', $percakapan->id),
+                'data' => ['percakapan_id' => $percakapan->id],
+            ]);
+        }
 
         return $pesan->load('pengirim');
     }

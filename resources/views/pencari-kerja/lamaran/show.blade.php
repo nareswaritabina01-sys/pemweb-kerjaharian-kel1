@@ -72,5 +72,41 @@
                 </a>
             </div>
         @endif
+
+        @if ($lamaran->status === 'menunggu')
+            <div class="mt-6 border-t border-gray-100 pt-6">
+                <form action="{{ route('pencari-kerja.lamaran.batalkan', $lamaran) }}" method="POST"
+                    id="form-batal-{{ $lamaran->id }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" onclick="batalkanLamaran({{ $lamaran->id }})"
+                        class="inline-block bg-white border border-red-200 text-red-600 font-bold px-5 py-2.5 rounded-xl text-xs hover:bg-red-50 transition">
+                        <i class="fa-solid fa-xmark mr-1"></i> Batalkan Lamaran
+                    </button>
+                </form>
+            </div>
+        @endif
     </div>
+
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            function batalkanLamaran(id) {
+                Swal.fire({
+                    title: 'Batalkan lamaran ini?',
+                    text: 'Tindakan ini tidak dapat dibatalkan.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Ya, Batalkan',
+                    cancelButtonText: 'Batal',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(`form-batal-${id}`).submit();
+                    }
+                });
+            }
+        </script>
+    @endpush
 @endsection

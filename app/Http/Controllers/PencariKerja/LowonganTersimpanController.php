@@ -22,7 +22,7 @@ class LowonganTersimpanController extends Controller
             ->paginate(10);
 
         return view('pencari-kerja.lowongan-tersimpan', [
-            'lowonganTersimpan' => $lowonganTersimpan,
+            'tersimpan' => $lowonganTersimpan,
         ]);
     }
 

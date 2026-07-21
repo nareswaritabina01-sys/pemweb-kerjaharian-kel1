@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'KerjaHarian')</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -62,6 +64,11 @@
                     class="flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('pencari-kerja.profil.*') ? 'bg-teal-50 text-primary' : 'text-gray-600 hover:bg-gray-50 hover:text-primary' }}">
                     <i class="fa-solid fa-user text-lg"></i>
                     <span>Profil Saya</span>
+                </a>
+                <a href="{{ route('pencari-kerja.notifikasi') }}"
+                    class="flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('pencari-kerja.notifikasi') ? 'bg-teal-50 text-primary' : 'text-gray-600 hover:bg-gray-50 hover:text-primary' }}">
+                    <i class="fa-solid fa-bell text-lg"></i>
+                    <span>Notifikasi</span>
                 </a>
                 <a href="{{ route('pencari-kerja.bantuan') }}"
                     class="flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('pencari-kerja.bantuan') ? 'bg-teal-50 text-primary' : 'text-gray-600 hover:bg-gray-50 hover:text-primary' }}">

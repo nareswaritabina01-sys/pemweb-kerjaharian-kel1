@@ -113,13 +113,13 @@
     </div>
 
     @unless ($sudahMelamar || $lowongan->status !== 'dibuka' || $lowongan->sisa_kuota <= 0)
-        <div id="applyModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div id="applyModal" class="fixed inset-0 z-[9999] overflow-y-auto hidden">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 transition-opacity bg-gray-900/50 backdrop-blur-sm" id="closeModalBg"></div>
+                <div class="fixed inset-0 z-0 transition-opacity bg-gray-900/50 backdrop-blur-sm" id="closeModalBg"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-                <div
-                    class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100">
+                <div <div
+                    class="relative z-10 inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100">
                     <div class="bg-white px-6 py-5 border-b border-gray-100 flex justify-between items-center">
                         <div>
                             <h3 class="text-sm font-bold text-gray-900">Kirim Lamaran Kerja</h3>

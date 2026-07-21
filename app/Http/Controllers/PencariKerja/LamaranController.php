@@ -63,4 +63,16 @@ class LamaranController extends Controller
             ->route('pencari-kerja.lamaran.index')
             ->with('success', 'Lamaran berhasil dikirim. Silakan tunggu peninjauan dari pemberi kerja.');
     }
+
+    public function batalkan(Request $request, Lamaran $lamaran): RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $this->lamaranService->batalkan($user, $lamaran);
+
+        return redirect()
+            ->route('pencari-kerja.lamaran.index')
+            ->with('success', 'Lamaran berhasil dibatalkan.');
+    }
 }

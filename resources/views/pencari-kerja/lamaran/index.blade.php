@@ -80,6 +80,17 @@
                                 <a href="{{ route('pencari-kerja.pesan.show', $item->percakapan) }}"
                                     class="text-xs font-bold text-white bg-primary px-4 py-2 rounded-xl hover:bg-primary-hover transition">Hubungi</a>
                             @endif
+                            @if ($item->status === 'menunggu')
+                                <form action="{{ route('pencari-kerja.lamaran.batalkan', $item) }}" method="POST"
+                                    id="form-batal-{{ $item->id }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="batalkanLamaran({{ $item->id }})"
+                                        class="text-xs font-bold text-red-600 border border-red-200 px-4 py-2 rounded-xl hover:bg-red-50 transition">
+                                        Batal
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -98,4 +109,26 @@
             </div>
         @endif
     </div>
+
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            function batalkanLamaran(id) {
+                Swal.fire({
+                    title: 'Batalkan lamaran ini?',
+                    text: 'Tindakan ini tidak dapat dibatalkan.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Ya, Batalkan',
+                    cancelButtonText: 'Batal',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(`form-batal-${id}`).submit();
+                    }
+                });
+            }
+        </script>
+    @endpush
 @endsection

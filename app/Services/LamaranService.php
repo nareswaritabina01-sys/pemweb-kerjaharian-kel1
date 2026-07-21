@@ -81,6 +81,23 @@ class LamaranService
         return $lamaran;
     }
 
+    public function batalkan(User $pencariKerja, Lamaran $lamaran): void
+    {
+        if ($lamaran->id_pencari_kerja !== $pencariKerja->id) {
+            throw ValidationException::withMessages([
+                'lamaran' => 'Anda tidak memiliki akses untuk membatalkan lamaran ini.',
+            ]);
+        }
+
+        if ($lamaran->status !== 'menunggu') {
+            throw ValidationException::withMessages([
+                'lamaran' => 'Lamaran yang sudah diproses tidak dapat dibatalkan.',
+            ]);
+        }
+
+        $lamaran->delete();
+    }
+
     public function riwayat(User $pencariKerja)
     {
         return Lamaran::with('lowongan.pemberiKerja')

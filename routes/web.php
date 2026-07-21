@@ -8,6 +8,7 @@ use App\Http\Controllers\PencariKerja\LowonganController;
 use App\Http\Controllers\PencariKerja\LamaranController;
 use App\Http\Controllers\PencariKerja\ProfilController;
 use App\Http\Controllers\PencariKerja\PesanController;
+use App\Http\Controllers\PencariKerja\NotifikasiController;
 use App\Http\Controllers\PencariKerja\LowonganTersimpanController;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
@@ -57,6 +58,7 @@ Route::middleware(['auth', 'cek.pencari-kerja'])->prefix('pencari-kerja')->name(
     Route::get('/lamaran', [LamaranController::class, 'index'])->name('lamaran.index');
     Route::get('/lamaran/{lamaran}', [LamaranController::class, 'show'])->name('lamaran.show');
     Route::post('/lowongan/{lowongan}/lamar', [LamaranController::class, 'store'])->name('lamaran.store');
+    Route::delete('/lamaran/{lamaran}/batalkan', [LamaranController::class, 'batalkan'])->name('lamaran.batalkan');
 
     // Profil
     Route::get('/profil', [ProfilController::class, 'edit'])->name('profil.edit');
@@ -75,9 +77,7 @@ Route::middleware(['auth', 'cek.pencari-kerja'])->prefix('pencari-kerja')->name(
     Route::get('pesan/{percakapan}/baru', [PesanController::class, 'ambilBaru'])->name('pesan.baru');
 
     // Notifikasi (DUMMY - belum ada tabel/logic asli, tunggu keputusan scope resmi)
-    Route::get('/notifikasi', function () {
-        return view('pencari-kerja.notifikasi');
-    })->name('notifikasi');
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
 
     // Bantuan (statis)
     Route::get('/bantuan', function () {

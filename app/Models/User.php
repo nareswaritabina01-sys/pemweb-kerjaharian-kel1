@@ -31,7 +31,7 @@ class User extends Authenticatable
         'nama_bank',
         'nomor_rekening',
         'nama_pemilik_rekening',
-        'status_aktif',
+        'status_akun',
         'bio',
         'nama_usaha',
         'jenis_usaha',
@@ -57,7 +57,6 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'status_aktif' => 'boolean',
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
         ];
@@ -82,7 +81,7 @@ class User extends Authenticatable
 
     public function scopeAktif(Builder $query): Builder
     {
-        return $query->where('status_aktif', true);
+        return $query->where('status_akun', 'aktif');
     }
 
     // ===== Helper Role (dipakai di Blade & Middleware) =====
@@ -100,6 +99,21 @@ class User extends Authenticatable
     public function isPencariKerja(): bool
     {
         return $this->role === 'pencari_kerja';
+    }
+
+    public function isAktif(): bool
+    {
+        return $this->status_akun === 'aktif';
+    }
+
+    public function isNonaktif(): bool
+    {
+        return $this->status_akun === 'nonaktif';
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->status_akun === 'banned';
     }
 
     // ===== Accessor Foto Profil dengan Fallback =====

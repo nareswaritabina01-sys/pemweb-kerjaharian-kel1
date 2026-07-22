@@ -24,17 +24,15 @@ class LowonganService
             });
         }
 
-        if (! empty($filter['kategori'])) {
-            $query->kategori($filter['kategori']);
+        if (! empty($filter['kategori_id'])) {
+            $query->denganKategori((int) $filter['kategori_id']);
         }
 
-        // Radius search: pakai koordinat dari filter request,
-        // atau fallback ke lokasi tersimpan milik user (kalau ada)
         $lat = $filter['latitude'] ?? $user?->latitude;
         $lng = $filter['longitude'] ?? $user?->longitude;
 
         if ($lat && $lng) {
-            $radius = $filter['radius'] ?? null; // km, null = tanpa batas
+            $radius = $filter['radius'] ?? null;
             $query->terdekat((float) $lat, (float) $lng, $radius ? (float) $radius : null);
         } else {
             $query->latest();
@@ -45,7 +43,7 @@ class LowonganService
 
     public function detail(int $id): Lowongan
     {
-        return Lowongan::with('pemberiKerja')->findOrFail($id);
+        return Lowongan::with(['pemberiKerja', 'kategori'])->findOrFail($id);
     }
 
     public function buat(User $pemberiKerja, array $data): Lowongan

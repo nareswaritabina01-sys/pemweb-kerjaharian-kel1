@@ -8,8 +8,6 @@ class LowonganRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Otorisasi kepemilikan (untuk update) dicek di Controller,
-        // di sini cukup pastikan user login sebagai pemberi_kerja
         /** @var \App\Models\User $user */
         $user = $this->user();
 
@@ -26,7 +24,7 @@ class LowonganRequest extends FormRequest
             'longitude' => ['required', 'numeric', 'between:-180,180'],
             'upah' => ['required', 'numeric', 'min:0'],
             'satuan_upah' => ['required', 'in:harian,borongan'],
-            'kategori' => ['required', 'string', 'max:100'],
+            'kategori_id' => ['required', 'integer', 'exists:kategori,id'],
             'deskripsi' => ['required', 'string'],
             'kuota_pekerja' => ['required', 'integer', 'min:1'],
         ];
@@ -42,7 +40,8 @@ class LowonganRequest extends FormRequest
             'upah.required' => 'Upah wajib diisi.',
             'upah.min' => 'Upah tidak boleh negatif.',
             'satuan_upah.in' => 'Satuan upah harus harian atau borongan.',
-            'kategori.required' => 'Kategori wajib diisi.',
+            'kategori_id.required' => 'Kategori wajib dipilih.',
+            'kategori_id.exists' => 'Kategori yang dipilih tidak valid.',
             'deskripsi.required' => 'Deskripsi pekerjaan wajib diisi.',
             'kuota_pekerja.min' => 'Kuota pekerja minimal 1.',
         ];

@@ -4,6 +4,10 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WelcomeController;
 
+// ADMIN
+use App\Http\Controllers\Admin\PenggunaController;
+use App\Http\Controllers\Admin\KategoriController;
+
 // PEMBERI KERJA
 use App\Http\Controllers\PemberiKerja\DashboardController as PemberiKerjaDashboardController;
 use App\Http\Controllers\PemberiKerja\LowonganController as PemberiKerjaLowonganController;
@@ -44,15 +48,28 @@ Route::middleware('guest')->group(function () {
         ->name('register.pencari-kerja.process');
 });
 
-// AUTH
-Route::middleware(['auth', 'cek.admin'])->prefix('admin')->name('admin.')->group(function () {
+// AUTH (ADMIN)
+Route::middleware(['auth', 'cek.admin', 'cek.status-akun'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard.index');
     })->name('dashboard');
+
+    // Pengguna
+    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+    Route::get('/pengguna/{pengguna}', [PenggunaController::class, 'show'])->name('pengguna.show');
+    Route::patch('/pengguna/{pengguna}/status', [PenggunaController::class, 'updateStatus'])->name('pengguna.update-status');
+
+    // Kategori
+    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::get('/kategori/tambah', [KategoriController::class, 'create'])->name('kategori.create');
+    Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
+    Route::get('/kategori/{kategori}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
+    Route::put('/kategori/{kategori}', [KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('/kategori/{kategori}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 });
 
 // PEMBERI KERJA
-Route::middleware(['auth', 'cek.pemberi-kerja'])->prefix('pemberi-kerja')->name('pemberi-kerja.')->group(function () {
+Route::middleware(['auth', 'cek.pemberi-kerja', 'cek.status-akun'])->prefix('pemberi-kerja')->name('pemberi-kerja.')->group(function () {
 
     Route::get('/dashboard', [PemberiKerjaDashboardController::class, 'index'])->name('dashboard');
 
@@ -93,7 +110,7 @@ Route::middleware(['auth', 'cek.pemberi-kerja'])->prefix('pemberi-kerja')->name(
 });
 
 // PENCARI KERJA
-Route::middleware(['auth', 'cek.pencari-kerja'])->prefix('pencari-kerja')->name('pencari-kerja.')->group(function () {
+Route::middleware(['auth', 'cek.pencari-kerja', 'cek.status-akun'])->prefix('pencari-kerja')->name('pencari-kerja.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

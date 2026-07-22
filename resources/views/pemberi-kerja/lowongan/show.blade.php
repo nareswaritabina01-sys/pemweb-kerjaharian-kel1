@@ -34,7 +34,7 @@
             <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
                 <div>
                     <p class="text-[11px] text-gray-400 mb-1">Kategori</p>
-                    <p class="font-semibold text-gray-800">{{ $lowongan->kategori }}</p>
+                    <p class="font-semibold text-gray-800">{{ $lowongan->kategori->nama }}</p>
                 </div>
                 <div>
                     <p class="text-[11px] text-gray-400 mb-1">Upah</p>

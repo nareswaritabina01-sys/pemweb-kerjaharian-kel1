@@ -3,6 +3,7 @@
 use App\Http\Middleware\CekAdmin;
 use App\Http\Middleware\CekPemberiKerja;
 use App\Http\Middleware\CekPencariKerja;
+use App\Http\Middleware\CekStatusAkun;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'cek.admin' => CekAdmin::class,
             'cek.pemberi-kerja' => CekPemberiKerja::class,
             'cek.pencari-kerja' => CekPencariKerja::class,
+            'cek.status-akun' => CekStatusAkun::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

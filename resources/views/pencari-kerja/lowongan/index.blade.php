@@ -24,23 +24,11 @@
             </div>
 
             <div class="flex flex-wrap gap-2 justify-center">
-                @php
-                    $kategoriList = [
-                        'Pertukangan',
-                        'ART',
-                        'Buruh Harian',
-                        'Supir',
-                        'Security',
-                        'Tukang Kebun',
-                        'Laundry',
-                        'Lainnya',
-                    ];
-                @endphp
                 @foreach ($kategoriList as $kat)
-                    <button type="submit" name="kategori" value="{{ $kat }}"
+                    <button type="submit" name="kategori" value="{{ $kat->id }}"
                         class="px-4 py-2 rounded-full border text-xs font-semibold transition
-                        {{ request('kategori') === $kat ? 'bg-primary text-white border-primary' : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary' }}">
-                        {{ $kat }}
+            {{ (int) request('kategori') === $kat->id ? 'bg-primary text-white border-primary' : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary' }}">
+                        {{ $kat->nama }}
                     </button>
                 @endforeach
             </div>

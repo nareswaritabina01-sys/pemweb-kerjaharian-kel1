@@ -13,9 +13,7 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function __construct(protected AuthService $authService)
-    {
-    }
+    public function __construct(protected AuthService $authService) {}
 
     public function showLoginForm(): View
     {
@@ -35,14 +33,6 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
-
-        if (! $user->status_aktif) {
-            Auth::logout();
-
-            return back()->withErrors([
-                'email' => 'Akun Anda telah dinonaktifkan. Hubungi admin.',
-            ]);
-        }
 
         return redirect()
             ->to($this->authService->redirectPath($user))

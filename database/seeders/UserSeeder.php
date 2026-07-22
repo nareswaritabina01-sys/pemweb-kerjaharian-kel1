@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
                     'longitude' => $data['longitude'],
                     'no_telepon' => $data['no_telepon'],
                     'alamat' => $data['alamat'],
-                    'status_aktif' => true,
+                    'status_akun' => 'aktif',
                 ]
             );
         }
@@ -103,7 +103,7 @@ class UserSeeder extends Seeder
                     'nama_bank' => $data['bank'] ? 'Bank BCA' : null,
                     'nomor_rekening' => $data['bank'] ? '1234567890' : null,
                     'nama_pemilik_rekening' => $data['bank'] ? $data['nama'] : null,
-                    'status_aktif' => true,
+                    'status_akun' => 'aktif',
                 ]
             );
         }

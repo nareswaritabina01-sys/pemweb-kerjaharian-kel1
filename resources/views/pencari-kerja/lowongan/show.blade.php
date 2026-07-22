@@ -21,7 +21,7 @@
                                 Rp {{ number_format($lowongan->upah, 0, ',', '.') }} / {{ $lowongan->satuan_upah }}
                             </span>
                             <span class="px-2.5 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg">
-                                <i class="fa-solid fa-tag mr-1"></i> {{ $lowongan->kategori }}
+                                <i class="fa-solid fa-tag mr-1"></i> {{ $lowongan->kategori->nama }}
                             </span>
                             <span class="px-2.5 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg">
                                 <i class="fa-solid fa-user-group mr-1"></i> {{ $lowongan->kuota_pekerja }} Pekerja

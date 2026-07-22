@@ -41,26 +41,17 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">Kategori</label>
-                    <select name="kategori"
+                    <select name="kategori_id"
                         class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-                        @php
-                            $kategoriList = [
-                                'Pertukangan',
-                                'ART',
-                                'Buruh Harian',
-                                'Supir',
-                                'Security',
-                                'Tukang Kebun',
-                                'Laundry',
-                                'Lainnya',
-                            ];
-                        @endphp
+                        <option value="">Pilih kategori</option>
                         @foreach ($kategoriList as $kat)
-                            <option value="{{ $kat }}" {{ old('kategori') === $kat ? 'selected' : '' }}>
-                                {{ $kat }}</option>
+                            <option value="{{ $kat->id }}"
+                                {{ (int) old('kategori_id') === $kat->id ? 'selected' : '' }}>
+                                {{ $kat->nama }}
+                            </option>
                         @endforeach
                     </select>
-                    @error('kategori')
+                    @error('kategori_id')
                         <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
                     @enderror
                 </div>

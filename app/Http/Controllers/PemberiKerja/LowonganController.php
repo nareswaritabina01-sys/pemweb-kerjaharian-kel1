@@ -4,6 +4,7 @@ namespace App\Http\Controllers\PemberiKerja;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PemberiKerja\LowonganRequest;
+use App\Models\Kategori;
 use App\Models\Lowongan;
 use App\Services\LowonganService;
 use Illuminate\Http\RedirectResponse;
@@ -27,7 +28,9 @@ class LowonganController extends Controller
 
     public function create(): View
     {
-        return view('pemberi-kerja.lowongan.create');
+        $kategoriList = Kategori::orderBy('nama')->get();
+
+        return view('pemberi-kerja.lowongan.create', compact('kategoriList'));
     }
 
     public function store(LowonganRequest $request): RedirectResponse
@@ -55,7 +58,9 @@ class LowonganController extends Controller
     {
         $this->pastikanPemilik($request, $lowongan);
 
-        return view('pemberi-kerja.lowongan.edit', compact('lowongan'));
+        $kategoriList = Kategori::orderBy('nama')->get();
+
+        return view('pemberi-kerja.lowongan.edit', compact('lowongan', 'kategoriList'));
     }
 
     public function update(LowonganRequest $request, Lowongan $lowongan): RedirectResponse
@@ -86,10 +91,6 @@ class LowonganController extends Controller
             ->with('success', 'Lowongan berhasil dihapus.');
     }
 
-    /**
-     * Toggle status lowongan dibuka <-> ditutup (manual oleh pemberi kerja,
-     * terpisah dari auto-close via LamaranService::terima()).
-     */
     public function toggleStatus(Request $request, Lowongan $lowongan): RedirectResponse
     {
         $this->pastikanPemilik($request, $lowongan);

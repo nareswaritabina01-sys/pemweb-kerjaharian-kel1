@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Kategori;
 use App\Models\Lowongan;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -19,6 +20,9 @@ class LowonganSeeder extends Seeder
             return;
         }
 
+        // Ambil kategori_id berdasarkan nama, dari 8 kategori resmi
+        $kategoriId = Kategori::pluck('id', 'nama');
+
         $pusatLat = -6.8385;
         $pusatLng = 107.4855;
 
@@ -33,7 +37,7 @@ class LowonganSeeder extends Seeder
                 'longitude' => $pusatLng + 0.01,
                 'upah' => 100000,
                 'satuan_upah' => 'harian',
-                'kategori' => 'Kebersihan',
+                'kategori_id' => $kategoriId['ART'] ?? null,
                 'deskripsi' => "Dibutuhkan tenaga bersih-bersih rumah 2 lantai.\nJam kerja 08:00-12:00.\nDisediakan alat kebersihan.",
                 'kuota_pekerja' => 2,
                 'status' => 'dibuka',
@@ -47,7 +51,7 @@ class LowonganSeeder extends Seeder
                 'longitude' => $pusatLng - 0.02,
                 'upah' => 150000,
                 'satuan_upah' => 'harian',
-                'kategori' => 'Angkut Barang',
+                'kategori_id' => $kategoriId['Buruh Harian'] ?? null,
                 'deskripsi' => "Bantu angkut barang pindahan rumah.\nEstimasi selesai 1 hari.\nDiutamakan yang berpengalaman.",
                 'kuota_pekerja' => 3,
                 'status' => 'dibuka',
@@ -61,7 +65,7 @@ class LowonganSeeder extends Seeder
                 'longitude' => $pusatLng + 0.012,
                 'upah' => 300000,
                 'satuan_upah' => 'borongan',
-                'kategori' => 'Pertukangan',
+                'kategori_id' => $kategoriId['Pertukangan'] ?? null,
                 'deskripsi' => "Cat ulang pagar rumah sepanjang 15 meter.\nCat disediakan pemberi kerja.",
                 'kuota_pekerja' => 1,
                 'status' => 'dibuka',
@@ -76,7 +80,7 @@ class LowonganSeeder extends Seeder
                 'longitude' => $pusatLng + 0.09,
                 'upah' => 120000,
                 'satuan_upah' => 'harian',
-                'kategori' => 'Gudang',
+                'kategori_id' => $kategoriId['Buruh Harian'] ?? null,
                 'deskripsi' => "Bongkar muat barang gudang.\nJam kerja 07:00-15:00.",
                 'kuota_pekerja' => 5,
                 'status' => 'dibuka',
@@ -91,7 +95,7 @@ class LowonganSeeder extends Seeder
                 'longitude' => $pusatLng - 0.02,
                 'upah' => 250000,
                 'satuan_upah' => 'harian',
-                'kategori' => 'Katering',
+                'kategori_id' => $kategoriId['Lainnya'] ?? null,
                 'deskripsi' => "Sudah tidak menerima pelamar, kuota terpenuhi.",
                 'kuota_pekerja' => 1,
                 'status' => 'ditutup',
